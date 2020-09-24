@@ -97,7 +97,7 @@ class SslPinningPlugin : MethodCallHandler, FlutterPlugin {
     }
 
     fun checkConnectionAsync(a: SslPinningPlugin,
-                             serverURL: string,
+                             serverURL: String,
                              allowedFingerprints: List<String>,
                              httpHeaderArgs: Map<String, String>,
                              timeout: Int,
