@@ -25,6 +25,7 @@ import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.async
+import kotlinx.coroutines.GlobalScope
 
 class SslPinningPlugin : MethodCallHandler, FlutterPlugin {
 
