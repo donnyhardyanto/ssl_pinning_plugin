@@ -108,7 +108,7 @@ class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
         val type: String = arguments.get("type") as String
 
         runBlocking {
-            val get: Boolean = this.checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
+            val get: Boolean = checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
 
             if (get) {
                 result.success("CONNECTION_SECURE")
