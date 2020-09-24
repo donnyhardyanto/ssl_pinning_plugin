@@ -107,9 +107,10 @@ class SslPinningPlugin : MethodCallHandler, FlutterPlugin {
         val timeout: Int = arguments.get("timeout") as Int
         val type: String = arguments.get("type") as String
 
-        val get:Boolean = async<Boolean> {
+        val futureGet = async<Boolean> {
             this.checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
-        }.await()
+        }
+        var get = futureGet.await()
         if (get) {
             result.success("CONNECTION_SECURE")
         } else {
