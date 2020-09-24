@@ -23,9 +23,6 @@ import android.os.StrictMode
 
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionStage
-import java.util.concurrent.TimeUnit
 
 class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
 
@@ -50,7 +47,6 @@ class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         try {
             when (call.method) {
@@ -63,7 +59,6 @@ class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
 
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     @Throws(ParseException::class)
     private fun handleCheckEvent(call: MethodCall, result: Result) {
 
@@ -75,23 +70,22 @@ class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
         val timeout: Int = arguments.get("timeout") as Int
         val type: String = arguments.get("type") as String
 
-        val get: Boolean = CompletableFuture.supplyAsync { this.checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod) }.get()
+        runBlocking {
+            val get: Boolean = CompletableFuture.supplyAsync { this.checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod) }.get()
 
-        if(get) {
-            result.success("CONNECTION_SECURE")
-        }else {
-            result.error("CONNECTION_NOT_SECURE", "Connection is not secure", "Fingerprint doesn't match")
+            if (get) {
+                result.success("CONNECTION_SECURE")
+            } else {
+                result.error("CONNECTION_NOT_SECURE", "Connection is not secure", "Fingerprint doesn't match")
+            }
         }
-
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     fun checkConnexion(serverURL: String, allowedFingerprints: List<String>, httpHeaderArgs: Map<String, String>, timeout: Int, type: String, httpMethod: String): Boolean {
         val sha: String = this.getFingerprint(serverURL, timeout, httpHeaderArgs, type, httpMethod)
         return allowedFingerprints.map { fp -> fp.toUpperCase().replace("\\s".toRegex(), "") }.contains(sha)
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     @Throws(IOException::class, NoSuchAlgorithmException::class, CertificateException::class, CertificateEncodingException::class)
     private fun getFingerprint(httpsURL: String, connectTimeout: Int, httpHeaderArgs: Map<String, String>, type: String, httpMethod: String): String {
 
@@ -100,7 +94,7 @@ class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
 
         if (httpMethod == "Head") httpClient.setRequestMethod("HEAD");
 
-        httpHeaderArgs.forEach { key, value -> httpClient.setRequestProperty(key, value) }
+        httpHeaderArgs.forEach { (key, value) -> httpClient.setRequestProperty(key, value) }
         httpClient.connect()
 
         val cert: Certificate = httpClient.getServerCertificates()[0] as Certificate
