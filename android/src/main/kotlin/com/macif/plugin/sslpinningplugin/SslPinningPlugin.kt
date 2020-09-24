@@ -23,7 +23,8 @@ import android.os.StrictMode
 
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.async
 
 class SslPinningPlugin : MethodCallHandler, FlutterPlugin {
 
