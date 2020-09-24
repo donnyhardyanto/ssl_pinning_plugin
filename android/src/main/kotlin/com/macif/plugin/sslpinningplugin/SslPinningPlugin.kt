@@ -25,13 +25,13 @@ import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.runBlocking
 
-class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
+class SslPinningPlugin : MethodCallHandler, FlutterPlugin {
 
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
     /// when the Flutter Engine is detached from the Activity
-    private lateinit var channel : MethodChannel
+    private lateinit var channel: MethodChannel
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
 
@@ -41,7 +41,7 @@ class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
 
     companion object {
         @JvmStatic
-        fun registerWith(registrar: Registrar){
+        fun registerWith(registrar: Registrar) {
 
             val channel = MethodChannel(registrar.messenger(), "ssl_pinning_plugin")
             channel.setMethodCallHandler(SslPinningPlugin())
@@ -107,8 +107,9 @@ class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
         val timeout: Int = arguments.get("timeout") as Int
         val type: String = arguments.get("type") as String
 
+        val get: Boolean
         runBlocking {
-            val get: Boolean = this.checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
+            get = checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
         }
         if (get) {
             result.success("CONNECTION_SECURE")
