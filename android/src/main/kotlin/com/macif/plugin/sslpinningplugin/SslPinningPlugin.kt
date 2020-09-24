@@ -60,28 +60,6 @@ class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
 
     }
 
-    @Throws(ParseException::class)
-    private fun handleCheckEvent(call: MethodCall, result: Result) {
-
-        val arguments: HashMap<String, Any> = call.arguments as HashMap<String, Any>
-        val serverURL: String = arguments.get("url") as String
-        val allowedFingerprints: List<String> = arguments.get("fingerprints") as List<String>
-        val httpMethod: String = arguments.get("httpMethod") as String
-        val httpHeaderArgs: Map<String, String> = arguments.get("headers") as Map<String, String>
-        val timeout: Int = arguments.get("timeout") as Int
-        val type: String = arguments.get("type") as String
-
-        runBlocking {
-            val get: Boolean = this.checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
-
-            if (get) {
-                result.success("CONNECTION_SECURE")
-            } else {
-                result.error("CONNECTION_NOT_SECURE", "Connection is not secure", "Fingerprint doesn't match")
-            }
-        }
-    }
-
     fun checkConnexion(serverURL: String, allowedFingerprints: List<String>, httpHeaderArgs: Map<String, String>, timeout: Int, type: String, httpMethod: String): Boolean {
         val sha: String = this.getFingerprint(serverURL, timeout, httpHeaderArgs, type, httpMethod)
         return allowedFingerprints.map { fp -> fp.toUpperCase().replace("\\s".toRegex(), "") }.contains(sha)
@@ -116,5 +94,27 @@ class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
+    }
+
+    @Throws(ParseException::class)
+    private fun handleCheckEvent(call: MethodCall, result: Result) {
+
+        val arguments: HashMap<String, Any> = call.arguments as HashMap<String, Any>
+        val serverURL: String = arguments.get("url") as String
+        val allowedFingerprints: List<String> = arguments.get("fingerprints") as List<String>
+        val httpMethod: String = arguments.get("httpMethod") as String
+        val httpHeaderArgs: Map<String, String> = arguments.get("headers") as Map<String, String>
+        val timeout: Int = arguments.get("timeout") as Int
+        val type: String = arguments.get("type") as String
+
+        runBlocking {
+            val get: Boolean = this.checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
+
+            if (get) {
+                result.success("CONNECTION_SECURE")
+            } else {
+                result.error("CONNECTION_NOT_SECURE", "Connection is not secure", "Fingerprint doesn't match")
+            }
+        }
     }
 }
