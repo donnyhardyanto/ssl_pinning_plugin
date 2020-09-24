@@ -23,7 +23,7 @@ import android.os.StrictMode
 
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 
 class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
 
@@ -72,7 +72,7 @@ class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
         val type: String = arguments.get("type") as String
 
         runBlocking {
-            val get: Boolean = CompletableFuture.supplyAsync { this.checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod) }.get()
+            val get: Boolean = this.checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
 
             if (get) {
                 result.success("CONNECTION_SECURE")
