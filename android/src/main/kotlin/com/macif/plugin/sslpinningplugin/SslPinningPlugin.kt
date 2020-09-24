@@ -96,7 +96,7 @@ class SslPinningPlugin : MethodCallHandler, FlutterPlugin {
         channel.setMethodCallHandler(null)
     }
 
-    // @Throws(ParseException::class)
+    @Throws(ParseException::class)
     private fun handleCheckEvent(call: MethodCall, result: Result) {
 
         val arguments: HashMap<String, Any> = call.arguments as HashMap<String, Any>
@@ -107,10 +107,9 @@ class SslPinningPlugin : MethodCallHandler, FlutterPlugin {
         val timeout: Int = arguments.get("timeout") as Int
         val type: String = arguments.get("type") as String
 
-        val get: Boolean
-        runBlocking {
-            get = checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
-        }
+        val get:Boolean = async<Boolean> {
+            return this.checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
+        }.await()
         if (get) {
             result.success("CONNECTION_SECURE")
         } else {
