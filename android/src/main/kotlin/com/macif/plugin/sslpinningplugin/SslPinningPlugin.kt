@@ -124,4 +124,3 @@ class SslPinningPlugin : MethodCallHandler, FlutterPlugin {
         }
     }
 }
-}
