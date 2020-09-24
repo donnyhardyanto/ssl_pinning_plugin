@@ -96,7 +96,7 @@ class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
         channel.setMethodCallHandler(null)
     }
 
-    @Throws(ParseException::class)
+    // @Throws(ParseException::class)
     private fun handleCheckEvent(call: MethodCall, result: Result) {
 
         val arguments: HashMap<String, Any> = call.arguments as HashMap<String, Any>
@@ -108,13 +108,12 @@ class SslPinningPlugin: MethodCallHandler, FlutterPlugin {
         val type: String = arguments.get("type") as String
 
         runBlocking {
-            val get: Boolean = checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
-
-            if (get) {
-                result.success("CONNECTION_SECURE")
-            } else {
-                result.error("CONNECTION_NOT_SECURE", "Connection is not secure", "Fingerprint doesn't match")
-            }
+            val get: Boolean = this.checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
+        }
+        if (get) {
+            result.success("CONNECTION_SECURE")
+        } else {
+            result.error("CONNECTION_NOT_SECURE", "Connection is not secure", "Fingerprint doesn't match")
         }
     }
 }
