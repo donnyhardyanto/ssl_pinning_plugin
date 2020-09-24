@@ -96,7 +96,13 @@ class SslPinningPlugin : MethodCallHandler, FlutterPlugin {
         channel.setMethodCallHandler(null)
     }
 
-    fun checkConnectionAsync(a: SslPinningPlugin) = GlobalScope.async {
+    fun checkConnectionAsync(a: SslPinningPlugin,
+                             serverURL: string,
+                             allowedFingerprints: List<String>,
+                             httpHeaderArgs: Map<String, String>,
+                             timeout: Int,
+                             type: String,
+                             httpMethod: String) = GlobalScope.async {
         a.checkConnexion(serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
     }
 
@@ -111,7 +117,7 @@ class SslPinningPlugin : MethodCallHandler, FlutterPlugin {
         val timeout: Int = arguments.get("timeout") as Int
         val type: String = arguments.get("type") as String
 
-        val futureGet = this.checkConnectionAsync(this)
+        val futureGet = this.checkConnectionAsync(this, serverURL, allowedFingerprints, httpHeaderArgs, timeout, type, httpMethod)
 
         var get: Boolean
         runBlocking {
